@@ -1,7 +1,7 @@
 {
   "dataset": "Simulated Clay Process Changes",
-  "version": "4.0",
-  "scenes": 1600,
+  "version": "4.1",
+  "scenes": 2200,
   "impressions_per_scene": 10,
   "queries_per_scene": 1,
   "recipe_counts": [
@@ -9,20 +9,20 @@
     200,
     200,
     200,
-    800
+    1400
   ],
   "training_scenes": 800,
-  "evaluation_scenes": 800,
+  "evaluation_scenes": 1400,
   "raw_file": "scenes.npz",
-  "raw_bytes": 119740500,
-  "raw_sha256": "d4d19e33c8ed4b355db1376eaf016b21460f656b31d40047db2725a82e8a431e",
+  "raw_bytes": 165860672,
+  "raw_sha256": "7c59ea456b3d0cc7fd728f19f09516a5aa292ab1ec16d7771dee7e188817b821",
   "generator_sha256": {
-    "generate.py": "1f70c23e260859bc0f38603de3431b0076364af9111dad73781f45fda49c3932",
-    "renderer.py": "0c7c1b2aa5d94b84a151ddeb360c0ece58b4ae8b41377f7e2969ee14241b724d"
+    "generate.py": "26c47a31de4dc2a890daf07f42263fe0175ba98aa0a404f67bb2534c2e0b160b",
+    "renderer.py": "be42b882d6292fe7fb5c2c4f536a2a0c62fedc6c3f8ad783d9304450c3952b17"
   },
   "frozen_windows_generator_sha256": {
-    "generate.py": "1f70c23e260859bc0f38603de3431b0076364af9111dad73781f45fda49c3932",
-    "renderer.py": "c3bd28df47ae925d9272b525fb5616eca2c94953b7a3a6c45181a4b97a3192c1"
+    "generate.py": "bdb19ec61af2216002754365d376a7652abeeff8e85c31775ee9a60475ecd6e7",
+    "renderer.py": "47b5739721ba06fda7c8cc8d2f5a716e5793912234cf26ba61453da2022aadaf"
   },
   "source_line_endings": "Published Git blobs use LF; Windows working source may use CRLF.",
   "license": "CC0-1.0",
@@ -36,6 +36,11 @@
     "orders",
     "depths",
     "textures",
-    "recipes"
-  ]
+    "recipes",
+    "tracks"
+  ],
+  "base_raw_sha256": "d4d19e33c8ed4b355db1376eaf016b21460f656b31d40047db2725a82e8a431e",
+  "original_scenes": 1600,
+  "diagnostic_supplement_scenes": 600,
+  "diagnostic_scenes_per_cohort": 200
 }

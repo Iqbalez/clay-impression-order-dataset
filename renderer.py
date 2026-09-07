@@ -75,7 +75,7 @@ def render_relief(height: np.ndarray, base_color: np.ndarray, lights: np.ndarray
     return np.concatenate(panels, axis=1)
 
 
-def make_scene(rng: np.random.Generator, recipe: str) -> tuple[np.ndarray, np.ndarray, np.ndarray, dict]:
+def make_scene(rng: np.random.Generator, recipe: str, query_override=None) -> tuple[np.ndarray, np.ndarray, np.ndarray, dict]:
     yy, xx = np.mgrid[0:SIZE, 0:SIZE].astype(np.float32)
     params: list[list[float]] = []
     for k in range(N_WEDGES):
@@ -96,6 +96,8 @@ def make_scene(rng: np.random.Generator, recipe: str) -> tuple[np.ndarray, np.nd
     fields = [wedge_fields(p, yy, xx) for p in params_arr]
     candidates=[(i,j) for i,j in PAIRS if np.count_nonzero(fields[i][0] & fields[j][0]) >= 24]
     query = candidates[int(rng.integers(len(candidates)))] if candidates else (0,1)
+    if query_override is not None:
+        query = tuple(map(int,query_override))
     order = rng.permutation(N_WEDGES)
     rank = np.empty(N_WEDGES, dtype=np.int8)
     rank[order] = np.arange(N_WEDGES, dtype=np.int8)
