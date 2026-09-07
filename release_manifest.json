@@ -1,13 +1,23 @@
 {
   "dataset": "Simulated Clay Impression Contacts",
-  "version": "1.0",
-  "scenes": 4000,
+  "version": "3.0",
+  "scenes": 1600,
+  "impressions_per_scene": 10,
+  "recipe_counts": [
+    200,
+    200,
+    200,
+    200,
+    800
+  ],
+  "training_scenes": 800,
+  "evaluation_scenes": 800,
   "raw_file": "scenes.npz",
-  "raw_bytes": 220704125,
-  "raw_sha256": "9f0de55ccae94d68e4926455627eb562a27e01df9dd65526e8d8f0ad16a91d66",
+  "raw_bytes": 91873198,
+  "raw_sha256": "25976757e983c11feb1b9f8ace25b9b830dd9cdb0d4788d2e486211578d56601",
   "generator_sha256": {
-    "generate.py": "57390554612de12b4b436d651ef23d8ab6aa026a6fb150643157298cca8fc439",
-    "renderer.py": "8fa41f1020617324ed975eaab5bd48ce352550cc7d9af4b686921a70a3129353"
+    "generate.py": "818b2bb00b7510b0b24f42be6cdfd5beaa679a5230fc9659fb63701f293384e2",
+    "renderer.py": "abe7e86211d7d0e074d5ecc595ee39cf55bc6ae27b62b433c9299cbdb73a6a95"
   },
   "license": "CC0-1.0",
   "implementation_license": "MIT"

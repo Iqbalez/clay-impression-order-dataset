@@ -6,11 +6,11 @@ import secrets
 import time
 from pathlib import Path
 import numpy as np
-from renderer import make_scene
+from renderer import make_scene, N_WEDGES
 
 RECIPES = ['clean', 'curved', 'worn', 'oblique', 'combined']
 
-def generate(out, entropy_file, per_recipe=800, batch_limit=400):
+def generate(out, entropy_file, per_recipe=200, batch_limit=400, test_scenes=800):
     out, entropy_file = Path(out), Path(entropy_file)
     out.mkdir(parents=True, exist_ok=True)
     entropy_file.parent.mkdir(parents=True, exist_ok=True)
@@ -19,7 +19,7 @@ def generate(out, entropy_file, per_recipe=800, batch_limit=400):
     entropy = bytes.fromhex(entropy_file.read_text(encoding='ascii').strip())
     if len(entropy) != 32:
         raise ValueError('entropy file must contain 32 bytes as hexadecimal')
-    n = per_recipe * 5
+    n = per_recipe * 4 + test_scenes
     scratch=out/'.generation'
     scratch.mkdir(exist_ok=True)
     image_file=scratch/'images.npy'
@@ -28,10 +28,10 @@ def generate(out, entropy_file, per_recipe=800, batch_limit=400):
     if resume.get('entropy_hash',hashlib.sha256(entropy).hexdigest())!=hashlib.sha256(entropy).hexdigest():
         raise ValueError('resume entropy does not match')
     images=np.lib.format.open_memmap(image_file,mode='r+' if image_file.exists() else 'w+',dtype=np.uint8,shape=(n,128,384,3))
-    plans = np.empty((n,8,4),dtype=np.float32)
+    plans = np.empty((n,N_WEDGES,4),dtype=np.float32)
     exact = np.empty_like(plans)
-    orders = np.empty((n,8),dtype=np.uint8)
-    recipes = np.repeat(np.arange(5,dtype=np.uint8),per_recipe)
+    orders = np.empty((n,N_WEDGES),dtype=np.uint8)
+    recipes = np.repeat(np.arange(5,dtype=np.uint8),[per_recipe]*4+[test_scenes])
     start = time.perf_counter()
     counts=resume['counts']
     metadata=resume['metadata']
@@ -57,7 +57,7 @@ def generate(out, entropy_file, per_recipe=800, batch_limit=400):
             return
     file=out/'scenes.npz'
     np.savez_compressed(file,images=images,plans=plans,exact_plans=exact,orders=orders,recipes=recipes)
-    report={'status':'MEASURED','scenes':n,'per_recipe':per_recipe,'recipes':RECIPES,
+    report={'status':'MEASURED','scenes':n,'per_recipe':per_recipe,'recipe_counts':[per_recipe]*4+[test_scenes],'recipes':RECIPES,
             'zero_edge_scenes':counts.count(0),'edge_count':sum(counts),'minimum_edges':min(counts),
             'seconds':time.perf_counter()-start,'raw_sha256':hashlib.sha256(file.read_bytes()).hexdigest(),
             'raw_bytes':file.stat().st_size,'numpy':np.__version__,
@@ -71,7 +71,8 @@ if __name__=='__main__':
     p=argparse.ArgumentParser()
     p.add_argument('--out',type=Path,required=True)
     p.add_argument('--entropy-file',type=Path,required=True)
-    p.add_argument('--per-recipe',type=int,default=800)
+    p.add_argument('--per-recipe',type=int,default=200)
+    p.add_argument('--test-scenes',type=int,default=800)
     p.add_argument('--batch-limit',type=int,default=400)
     a=p.parse_args()
-    generate(a.out,a.entropy_file,a.per_recipe,a.batch_limit)
+    generate(a.out,a.entropy_file,a.per_recipe,a.batch_limit,a.test_scenes)

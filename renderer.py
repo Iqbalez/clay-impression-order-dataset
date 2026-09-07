@@ -1,7 +1,7 @@
 """Original height-field renderer for the Clay Impression Order dataset.
 
-Numerical rendering is unchanged from the measured WedgeOrder v2 diagnostic
-(EXP-125). This CPU release uses new private scene realizations from generate.py.
+Revision 3 uses ten impressions with continuous orientations over a full turn.
+The footprint, contact definition, relief formation and illumination model are unchanged.
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ from PIL import Image, ImageFilter
 
 
 SIZE = 128
-N_WEDGES = 8
+N_WEDGES = 10
 PAIRS = [(i, j) for i in range(N_WEDGES) for j in range(i + 1, N_WEDGES)]
 OVERLAP_PIXELS = 24
 PROFILE_SEPARATION = 0.035
@@ -86,7 +86,7 @@ def make_scene(rng: np.random.Generator, recipe: str) -> tuple[np.ndarray, np.nd
             theta = rng.uniform(0, 2 * math.pi)
             cy = np.clip(anchor[0] + radius * math.sin(theta), 20, 108)
             cx = np.clip(anchor[1] + radius * math.cos(theta), 20, 108)
-        angle = rng.choice([0, math.pi / 4, math.pi / 2, 3 * math.pi / 4]) + rng.normal(0, 0.09)
+        angle = rng.uniform(-math.pi, math.pi)
         scale = rng.uniform(0.78, 1.18)
         params.append([float(cy), float(cx), float(angle), float(scale)])
 
