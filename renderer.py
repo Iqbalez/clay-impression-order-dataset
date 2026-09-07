@@ -1,7 +1,7 @@
-"""Generate and audit a bounded WedgeOrder preflight dataset.
+"""Original height-field renderer for the Clay Impression Order dataset.
 
-This is diagnostic evidence only. It is intentionally separate from any future
-prepare.py, grader, or release dataset.
+Numerical rendering is unchanged from the measured WedgeOrder v2 diagnostic
+(EXP-125). This CPU release uses new private scene realizations from generate.py.
 """
 
 from __future__ import annotations
