@@ -1,8 +1,9 @@
 {
-  "dataset": "Simulated Clay Impression Contacts",
-  "version": "3.0",
+  "dataset": "Simulated Clay Process Changes",
+  "version": "4.0",
   "scenes": 1600,
   "impressions_per_scene": 10,
+  "queries_per_scene": 1,
   "recipe_counts": [
     200,
     200,
@@ -13,17 +14,28 @@
   "training_scenes": 800,
   "evaluation_scenes": 800,
   "raw_file": "scenes.npz",
-  "raw_bytes": 91873198,
-  "raw_sha256": "25976757e983c11feb1b9f8ace25b9b830dd9cdb0d4788d2e486211578d56601",
+  "raw_bytes": 119740500,
+  "raw_sha256": "d4d19e33c8ed4b355db1376eaf016b21460f656b31d40047db2725a82e8a431e",
   "generator_sha256": {
-    "generate.py": "6b3ce186ff861f2b1cc8de1d96674cb86a653afdce99e5481fe3e49f84931971",
-    "renderer.py": "661526176849b56d9b41ebef5c71d3a08d27894563a11220fc9bf5e32af3fbe7"
+    "generate.py": "1f70c23e260859bc0f38603de3431b0076364af9111dad73781f45fda49c3932",
+    "renderer.py": "0c7c1b2aa5d94b84a151ddeb360c0ece58b4ae8b41377f7e2969ee14241b724d"
   },
+  "frozen_windows_generator_sha256": {
+    "generate.py": "1f70c23e260859bc0f38603de3431b0076364af9111dad73781f45fda49c3932",
+    "renderer.py": "c3bd28df47ae925d9272b525fb5616eca2c94953b7a3a6c45181a4b97a3192c1"
+  },
+  "source_line_endings": "Published Git blobs use LF; Windows working source may use CRLF.",
   "license": "CC0-1.0",
   "implementation_license": "MIT",
-  "frozen_windows_generator_sha256": {
-    "generate.py": "818b2bb00b7510b0b24f42be6cdfd5beaa679a5230fc9659fb63701f293384e2",
-    "renderer.py": "abe7e86211d7d0e074d5ecc595ee39cf55bc6ae27b62b433c9299cbdb73a6a95"
-  },
-  "source_line_endings": "Published Git blobs use LF; frozen Windows build used equivalent CRLF source."
+  "target": "128x128 signed surface-change mask for exchanging two hidden operation positions",
+  "raw_arrays": [
+    "images",
+    "plans",
+    "queries",
+    "exact_plans",
+    "orders",
+    "depths",
+    "textures",
+    "recipes"
+  ]
 }

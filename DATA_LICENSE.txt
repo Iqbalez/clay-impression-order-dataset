@@ -1,7 +1,7 @@
 CC0 1.0 Universal — Public Domain Dedication
 
 The creator dedicates the original generated images, measured plans, simulation
-records, and derived contact annotations in this dataset to the public domain
+records, and derived signed surface-change annotations in this dataset to the public domain
 under CC0 1.0 Universal, to the extent permitted by law.
 
 Full legal text: https://creativecommons.org/publicdomain/zero/1.0/legalcode

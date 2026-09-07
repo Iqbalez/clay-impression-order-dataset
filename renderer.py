@@ -1,6 +1,6 @@
 """Original height-field renderer for the Clay Impression Order dataset.
 
-Revision 3 uses ten impressions with continuous orientations over a full turn.
+Clay Process Change: final-surface counterfactual process-order interventions.
 The footprint, contact definition, relief formation and illumination model are unchanged.
 """
 
@@ -15,6 +15,7 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageFilter
+from scipy.ndimage import gaussian_filter
 
 
 SIZE = 128
@@ -93,12 +94,14 @@ def make_scene(rng: np.random.Generator, recipe: str) -> tuple[np.ndarray, np.nd
     # IDs are observable: top-to-bottom, then left-to-right in the supplied plan.
     params_arr = np.asarray(sorted(params, key=lambda p: (p[0], p[1])), dtype=np.float32)
     fields = [wedge_fields(p, yy, xx) for p in params_arr]
+    candidates=[(i,j) for i,j in PAIRS if np.count_nonzero(fields[i][0] & fields[j][0]) >= 24]
+    query = candidates[int(rng.integers(len(candidates)))] if candidates else (0,1)
     order = rng.permutation(N_WEDGES)
     rank = np.empty(N_WEDGES, dtype=np.int8)
     rank[order] = np.arange(N_WEDGES, dtype=np.int8)
 
     texture = smooth_noise(rng, SIZE)
-    base = 0.055 * texture
+    base = (0.055 * texture).astype(np.float64)
     curved = recipe in {"curved", "combined"}
     worn = recipe in {"worn", "combined"}
     oblique = recipe in {"oblique", "combined"}
@@ -107,21 +110,36 @@ def make_scene(rng: np.random.Generator, recipe: str) -> tuple[np.ndarray, np.nd
         base += rng.uniform(-0.08, 0.08) * (((xx - xc) / SIZE) ** 2 + ((yy - yc) / SIZE) ** 2)
     height = base.copy()
     profiles: list[np.ndarray] = []
+    depths = np.zeros(N_WEDGES,dtype=np.float32)
     for idx in order:
         core, expanded, raw_profile = fields[int(idx)]
         depth = rng.uniform(0.24, 0.42)
-        target = base + depth * raw_profile
+        depths[int(idx)] = depth
+        depth = float(depths[int(idx)])
+        target = base + depth * raw_profile.astype(np.float64)
         # Later impressions replace most of the earlier surface inside the stylus footprint.
         height[core] = 0.12 * height[core] + 0.88 * target[core]
         ring = expanded & ~core
-        height[ring] += depth * 0.10 * (1.0 + texture[ring])
+        height[ring] += depth * 0.10 * (1.0 + texture[ring].astype(np.float64))
         profiles.append(target)
 
+    changed_order = order.copy()
+    qa,qb = query
+    ia,ib = np.flatnonzero(order==qa)[0],np.flatnonzero(order==qb)[0]
+    changed_order[ia],changed_order[ib] = changed_order[ib],changed_order[ia]
+    alternate=base.copy()
+    for idx in changed_order:
+        core,expanded,raw_profile=fields[int(idx)]
+        depth=float(depths[int(idx)])
+        alternate[core]=.12*alternate[core]+.88*(base+depth*raw_profile.astype(np.float64))[core]
+        ring=expanded & ~core
+        alternate[ring]+=depth*.10*(1.0+texture[ring].astype(np.float64))
     if worn:
-        as_u8 = np.clip((height - height.min()) / max(float(np.ptp(height)), 1e-6) * 255, 0, 255).astype(np.uint8)
-        blurred = np.asarray(Image.fromarray(as_u8).filter(ImageFilter.GaussianBlur(radius=0.75)), dtype=np.float32)
-        blurred = blurred / 255.0 * float(np.ptp(height)) + float(height.min())
-        height = 0.72 * height + 0.28 * blurred + rng.normal(0, 0.006, height.shape)
+        wear_noise=rng.normal(0,.006,height.shape)
+        height=.72*height+.28*gaussian_filter(height,.75)+wear_noise
+        alternate=.72*alternate+.28*gaussian_filter(alternate,.75)+wear_noise
+    delta=np.round(alternate-height,6)
+    changes=np.where(delta>.02,1,np.where(delta<-.02,2,0)).astype(np.uint8)
 
     labels = np.zeros(len(PAIRS), dtype=np.int8)
     visible_support = []
@@ -159,5 +177,6 @@ def make_scene(rng: np.random.Generator, recipe: str) -> tuple[np.ndarray, np.nd
     plan[:, 2] = np.round(plan[:, 2] / math.pi, 3)
     plan[:, 3] = np.round(plan[:, 3] + rng.normal(0, 0.025, N_WEDGES), 3)
     meta = {"recipe": recipe, "order": order.tolist(), "scored_edges": int(np.count_nonzero(labels)), "support": visible_support, "exact_plans": params_arr.tolist()}
+    meta.update(query=list(map(int,query)),change_mask=changes,depths=depths,texture=texture,delta=delta.astype(np.float32))
     return image, plan.astype(np.float32), labels, meta
 
