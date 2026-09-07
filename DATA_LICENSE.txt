@@ -1,0 +1,15 @@
+CC0 1.0 Universal — Public Domain Dedication
+
+The creator dedicates the original generated images, measured plans, simulation
+records, and derived contact annotations in this dataset to the public domain
+under CC0 1.0 Universal, to the extent permitted by law.
+
+Full legal text: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+Human-readable summary: https://creativecommons.org/publicdomain/zero/1.0/
+
+No third-party photographs, meshes, fonts, scans, or other visual assets are
+included. The dataset is generated with repository-owned mathematical code.
+The generator implementation is separately released under the MIT License.
+
+No warranty is provided. The data are synthetic simulations and are not
+validated measurements of archaeological objects or real clay mechanics.
